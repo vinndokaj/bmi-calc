@@ -18,6 +18,7 @@ class FormField extends Component<Field> {
         return (
             <div>
                 <label>{this.props.labelText}</label>
+                <br/>
                 {this.props.type === 'select' ? 
                     <select name={this.props.name} id={this.props.name}>
                         {this.getOptions()}   

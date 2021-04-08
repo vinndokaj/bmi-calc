@@ -7,10 +7,12 @@ interface IProps {
     myFields : Array<Field>
     values: BMIValues;
     updateBMI: Function;
+    toggleBMI: VoidFunction;
 }
 
 interface IState {
     currentField: number;
+    error: boolean;
     redirect: boolean;
 }
 
@@ -18,7 +20,12 @@ interface IState {
 class Form extends Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
-        this.state = { currentField: 0, redirect: false }
+        this.state = { currentField: 0, error: false, redirect: false }
+
+        this.next = this.next.bind(this)
+        this.back = this.back.bind(this)
+        this.validateEntry = this.validateEntry.bind(this)
+        this.validateAux = this.validateAux.bind(this)
     }
 
     //next button event handler
@@ -29,27 +36,31 @@ class Form extends Component<IProps, IState> {
             this.setState((state, props) => {
                 let index = state.currentField + 1;
                 if(index === this.props.myFields.length){
-                    return { currentField: index-1, redirect: true };
+                    this.props.toggleBMI();
+                    return { currentField: index-1, error: false, redirect: true };
                 } else if (index < this.props.myFields.length) {
-                    return { currentField: index, redirect: false };
+                    return { currentField: index, error: false, redirect: false };
                 }
                 return state;
             });
+        } else {
+            this.setState({error:true})
         }
     }
 
     //back button event handler
     //calls validation and checks whether previous field is possible
     back = () => {
-        if (this.validateEntry()) {
-            this.setState((state, props) => {
-                let index = state.currentField - 1;
-                if (index >= 0) {
-                    return { currentField: index, redirect: false };
+        this.setState((state, props) => {
+            let index = state.currentField - 1;
+            if (index >= 0) {
+                if((state.currentField + 1) === this.props.myFields.length){
+                    this.props.toggleBMI();
                 }
-                return state;
-            });
-        }
+                return { currentField: index, error: false, redirect: false };
+            }
+            return state;
+        });
     }
 
     //validates entry then saves it to array with values 
@@ -61,28 +72,40 @@ class Form extends Component<IProps, IState> {
             this.props.updateBMI(formData.name, formData.value)
             return true
         }
+
         return false
     }
 
     // validate entry whether it is a number or string
-    //string checks for empty and number must be greater than 0
+    // string checks for empty and number must be greater than 0
     validateAux = (data: HTMLInputElement) => {
         if (data.type === "text") {
             return !(data.value.trim() === '');
         }
         return parseInt(data.value) > 0;
     }
+    // module.exports = validateAux;
 
     render() {
+        //form with no submit so prevent submit on enter key click
+        //could be used to validate form (next) on enter key
         const handleSubmit = (e: { preventDefault: () => void; }) => {
             e.preventDefault()
         }
 
         return (
             <form onSubmit={handleSubmit}>
-                <button type="button" onClick={this.back}>Back</button>
-                <button type="button" onClick={this.next}>Next</button>
+                <div className="mb-2">
+                    <button className="btn btn-secondary mr-5" type="button" onClick={this.back}>Back</button>
+                    <button className="btn btn-primary ml-5" type="button" onClick={this.next}>Next</button>
+                </div>
                 <FormField {...this.props.myFields[this.state.currentField]} />
+                <br/>
+                {this.state.error ?
+                    <p className="text-danger">Please fill out form field before proceeding</p>
+                    :
+                    ""
+                }
             </form>
 
         )
