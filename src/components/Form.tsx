@@ -36,7 +36,9 @@ class Form extends Component<IProps, IState> {
             this.setState((state, props) => {
                 let index = state.currentField + 1;
                 if(index === this.props.myFields.length){
-                    this.props.toggleBMI();
+                    if(!this.state.redirect){
+                        this.props.toggleBMI();
+                    }
                     return { currentField: index-1, error: false, redirect: true };
                 } else if (index < this.props.myFields.length) {
                     return { currentField: index, error: false, redirect: false };
