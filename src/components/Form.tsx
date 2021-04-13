@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 
 import FormField from './FormField'
 import { BMIValues, Field } from '../types'
-import { validateEntry } from '../validate'
+import { validateEntry } from '../utils/validate'
 
 interface IProps {
     myFields : Array<Field>
     values: BMIValues;
-    updateBMI: Function;
+    updateValues: Function;
     toggleBMI: VoidFunction;
 }
 
@@ -32,7 +32,7 @@ class Form extends Component<IProps, IState> {
     //when clicking next on final field should calculate bmi
     next = () => {
         let formData = document.getElementById(this.props.myFields[this.state.currentField].name) as HTMLInputElement;
-        if (validateEntry(formData, this.props.updateBMI)) {
+        if (validateEntry(formData, this.props.updateValues)) {
             this.setState((state, props) => {
                 let index = state.currentField + 1;
                 if(index === this.props.myFields.length){
@@ -54,7 +54,7 @@ class Form extends Component<IProps, IState> {
         this.setState((state, props) => {
             let index = state.currentField - 1;
             if (index >= 0) {
-                if((state.currentField + 1) === this.props.myFields.length){
+                if(this.state.redirect){
                     this.props.toggleBMI();
                 }
                 return { currentField: index, error: false, redirect: false };
@@ -63,34 +63,27 @@ class Form extends Component<IProps, IState> {
         });
     }
 
-    // //validates entry then saves it to array with values 
-    // validateEntry = () => {
-    //     let formData = document.getElementById(this.props.myFields[this.state.currentField].name) as HTMLInputElement;
-    //     // console.log(formData.name)
-
-    //     if(this.validateAux(formData)){
-    //         this.props.updateBMI(formData.name, formData.value)
-    //         return true
-    //     }
-
-    //     return false
-    // }
-
-    // // validate entry whether it is a number or string
-    // // string checks for empty and number must be greater than 0
-    // validateAux = (data: HTMLInputElement) => {
-    //     if (data.type === "text") {
-    //         return !(data.value.trim() === '');
-    //     }
-    //     return parseInt(data.value) > 0;
-    // }
-    // module.exports = validateAux;
-
     render() {
         //form with no submit so prevent submit on enter key click
         //could be used to validate form (next) on enter key
         const handleSubmit = (e: { preventDefault: () => void; }) => {
             e.preventDefault()
+            this.next()
+        }
+
+        const getVal = () => {
+            let value_name = this.props.myFields[this.state.currentField].name
+            if(value_name === "name"){
+                return this.props.values.name
+            } else if (value_name === "gender") {
+                return this.props.values.gender
+            } else if (value_name === "height") {
+                return this.props.values.height
+            } else if (value_name === "weight") {
+                return this.props.values.weight
+            } else {
+                return "";
+            }
         }
 
         return (
@@ -99,7 +92,7 @@ class Form extends Component<IProps, IState> {
                     <button className="btn btn-secondary mr-5" type="button" onClick={this.back}>Back</button>
                     <button className="btn btn-primary ml-5" type="button" onClick={this.next}>Next</button>
                 </div>
-                <FormField {...this.props.myFields[this.state.currentField]}/>
+                <FormField {...this.props.myFields[this.state.currentField]} value={getVal()} updateVals={this.props.updateValues}/>
                 <br/>
                 {this.state.error ?
                     <p className="text-danger">Please fill out form field before proceeding</p>

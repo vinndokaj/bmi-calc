@@ -8,14 +8,18 @@ export function validateEntry(formData: HTMLInputElement, callback: Function){
 
 export function validateAux(type : string, val : string) {
     //must be a string or a number
-    if (type === "text" || type === "select") {
+    if (type === "text") {
         if(isNaN(+val)){
             return !(val.trim() === '');
         } else {
             return false;
         }
-    } else if (type === "number"){
+    } else if (type === "number" || type === "select-one"){
         return parseInt(val) > 0;
     }
     return false;
+}
+
+export function calculateBMI(weight : number, height : number){
+    return weight / height / height * 703;
 }

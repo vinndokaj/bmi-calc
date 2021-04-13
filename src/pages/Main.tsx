@@ -3,6 +3,7 @@ import React from 'react'
 
 import Form from '../components/Form'
 import { Field, BMIValues } from '../types'
+import { calculateBMI } from '../utils/validate'
 
 interface IState {
     values : BMIValues;
@@ -10,7 +11,6 @@ interface IState {
     showBMI : boolean;
 }
 
-//too large to make into a state - inefficent
 const formFields = [
     { name: 'name', type: 'text', labelText: 'Enter name:' },
     { name: 'gender', type: 'select', labelText: 'Choose a gender:', options: [{ value: 1, name: 'Male' }, { value: 2, name: 'Female' }] },
@@ -23,7 +23,7 @@ const defaultState = {
     values: {
         name: "",
         gender: 0,
-        height: 1,
+        height: 0,
         weight: 0,
     },
     bmi: 0,
@@ -37,7 +37,7 @@ export class Main extends React.Component<{}, IState> {
         this.setState(defaultState)
     }
 
-    //can be optimized to reduce redundency 
+    //can maybe be optimized to reduce redundency 
     updateInformation = (field : string, payload : string) => {
         let temp = this.state.values;
         if(field === "name"){
@@ -52,22 +52,19 @@ export class Main extends React.Component<{}, IState> {
         this.setState({values : temp})
     }
 
+    //toggle whether bmi is showing and if it is recalculate to ensure accurate data
     toggleBMI = () => {
-        this.setState({showBMI: !this.state.showBMI})
-    }
-
-    componentDidUpdate(prevProps: {}, prevState: IState){
-        let newBMI = this.state.values.weight / this.state.values.height / this.state.values.height * 703;
-        if(prevState.bmi !== newBMI){
-            this.setState({bmi: newBMI})
+        if(!this.state.showBMI){
+            this.setState({showBMI: true, bmi: calculateBMI(this.state.values.weight, this.state.values.height)})
+        } else {
+            this.setState({showBMI: false})
         }
     }
 
     render() {
         return (
             <div className="mt-3 text-center align-center">
-                <Form updateBMI={this.updateInformation} toggleBMI={this.toggleBMI} myFields={formFields} values={this.state.values}/>
-                <br/>
+                <Form updateValues={this.updateInformation} toggleBMI={this.toggleBMI} myFields={formFields} values={this.state.values}/>
                 {this.state.showBMI ?
                     <p>Hi {this.state.values.name}, your bmi is {this.state.bmi.toFixed(2)}</p>
                     :
