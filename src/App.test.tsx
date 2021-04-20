@@ -31,20 +31,20 @@ describe('validateAux test cases', () => {
   it('should return true for validateAux("number", "1")', () => {
     expect(validateAux("number", "1")).toBe(true);
   })
-  it('should return true for validateAux("select-one", "")', () => {
-    expect(validateAux("select-one", "")).toBe(false);
+  it('should return true for validateAux("select", "")', () => {
+    expect(validateAux("select", "")).toBe(false);
   })
-  it('should return false for validateAux("select-one", "some text")', () => {
-    expect(validateAux("select-one", "some text")).toBe(false);
+  it('should return false for validateAux("select", "some text")', () => {
+    expect(validateAux("select", "some text")).toBe(false);
   })
-  it('should return false for validateAux("select-one", "-1")', () => {
-    expect(validateAux("select-one", "-1")).toBe(false);
+  it('should return false for validateAux("select", "-1")', () => {
+    expect(validateAux("select", "-1")).toBe(false);
   })
-  it('should return false for validateAux("select-one", "0")', () => {
-    expect(validateAux("select-one", "0")).toBe(false);
+  it('should return false for validateAux("select", "0")', () => {
+    expect(validateAux("select", "0")).toBe(false);
   })
-  it('should return true for validateAux("select-one", "1")', () => {
-    expect(validateAux("select-one", "1")).toBe(true);
+  it('should return true for validateAux("select", "1")', () => {
+    expect(validateAux("select", "1")).toBe(true);
   })
   it('should return false for validateAux("", "")', () => {
     expect(validateAux("", "")).toBe(false);

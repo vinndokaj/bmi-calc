@@ -6,16 +6,16 @@ export function validateEntry(formData: HTMLInputElement, callback: Function){
     return false
 }
 
-export function validateAux(type : string, val : string) {
+export function validateAux(type : string, val : string | number) {
     //must be a string or a number
-    if (type === "text") {
+    if (type === "text" && typeof val === 'string') {
         if(isNaN(+val)){
             return !(val.trim() === '');
         } else {
             return false;
         }
-    } else if (type === "number" || type === "select-one"){
-        return parseInt(val) > 0;
+    } else if (type === "number" || type === "select"){
+        return val > 0 && val < 400;
     }
     return false;
 }
