@@ -61,4 +61,10 @@ describe("BMI Calc Test Cases", () => {
   it('calculateBMI(-70,180) should be less than 0', () => {
     expect(calculateBMI(-70, 180)).toBeLessThan(0);
   })
+  it('calculateBMI(70,180) should be greater than 0', () => {
+    expect(calculateBMI(70, 180)).toBeGreaterThan(0);
+  })
+  it('calculateBMI(60,115) should be greater than 0', () => {
+    expect(calculateBMI(60, 115)).toBeGreaterThan(0);
+  })
 })

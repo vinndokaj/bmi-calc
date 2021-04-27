@@ -1,11 +1,3 @@
-export function validateEntry(formData: HTMLInputElement, callback: Function){
-    if(validateAux(formData.type, formData.value)){
-        callback(formData.name, formData.value)
-        return true
-    }
-    return false
-}
-
 export function validateAux(type : string, val : string | number) {
     //must be a string or a number
     if (type === "text" && typeof val === 'string') {
@@ -21,5 +13,5 @@ export function validateAux(type : string, val : string | number) {
 }
 
 export function calculateBMI(weight : number, height : number){
-    return weight / height / height * 703;
+    return weight / Math.pow(height, 2) * 703;
 }

@@ -4,22 +4,26 @@ import React from 'react'
 import { Field } from '../types'
 import { calculateBMI, validateAux } from '../utils/validate'
 
-type IState = { showBMI: boolean; fieldIndex: number; error: boolean; }
-
-let formFields = [
-    { value: "", name: 'name', type: 'text', labelText: 'Enter name:' },
-    { value: 0, name: 'gender', type: 'select', labelText: 'Choose a gender:', options: [{ value: 1, name: 'Male' }, { value: 2, name: 'Female' }] },
-    { value: 0, name: 'height', type: 'number', labelText: 'Enter a height in inches:' },
-    { value: 0, name: 'weight', type: 'number', labelText: 'Enter weight in pounds:' }
-] as Array<Field>
+interface IState { 
+    showBMI: boolean, 
+    fieldIndex: number, 
+    error: boolean, 
+    formFields: Array<Field>
+};
 
 export class Main extends React.Component<{}, IState> {
-    constructor(props: {}) {
+    public constructor(props: {}) {
         super(props);
         this.state = {
             fieldIndex: 0,
             showBMI: false,
-            error: false
+            error: false,
+            formFields: [
+                { value: "", name:"name", type: 'text', labelText: 'Enter name:' },
+                { value: 0, name:"gender", type: 'select', labelText: 'Choose a gender:', options: [{ value: 1, name: 'Male' }, { value: 2, name: 'Female' }] },
+                { value: 0, name:"height", type: 'number', labelText: 'Enter a height in inches:' },
+                { value: 0, name:"weight", type: 'number', labelText: 'Enter weight in pounds:' }
+            ]
         };
         this.changeForm = this.changeForm.bind(this)
         this.getOptions = this.getOptions.bind(this)
@@ -27,8 +31,8 @@ export class Main extends React.Component<{}, IState> {
         this.handleChange = this.handleChange.bind(this)
     }
 
-    changeForm = (direction: number) => {
-        let formData = formFields[this.state.fieldIndex]
+    private changeForm = (direction: number) => {
+        let formData = this.state.formFields[this.state.fieldIndex]
         let newIndex = this.state.fieldIndex + direction;
 
         if (direction === -1 && newIndex >= 0) {
@@ -40,7 +44,7 @@ export class Main extends React.Component<{}, IState> {
         } else if (direction === 1 && !this.state.showBMI) {
             if (validateAux(formData.type, formData.value)) {
                 this.setState(() => {
-                    if (newIndex === formFields.length) {
+                    if (newIndex === this.state.formFields.length) {
                         return { showBMI: true, fieldIndex: this.state.fieldIndex, error: false }
                     } else {
                         return { showBMI: false, fieldIndex: newIndex, error: false }
@@ -52,9 +56,9 @@ export class Main extends React.Component<{}, IState> {
         }
     }
 
-    getOptions = () => {
+    private getOptions = () => {
         let myOptions: Array<JSX.Element> = []
-        let options = formFields[this.state.fieldIndex].options
+        let options = this.state.formFields[this.state.fieldIndex].options
         if (options) {
             options.forEach(option => {
                 myOptions.push(<option key={option.name} {...option}>{option.name}</option>)
@@ -63,16 +67,19 @@ export class Main extends React.Component<{}, IState> {
         return myOptions;
     }
 
-    handleChange(event: { target: { value: string | number } }) {
+    private handleChange = (event: any) => {
         let num = +event.target.value
+        let tmp = this.state.formFields;
         if (isNaN(num)) {
-            formFields[this.state.fieldIndex].value = event.target.value;
+            tmp[this.state.fieldIndex].value = event.target.value;
+            this.setState({formFields : tmp})
         } else {
-            formFields[this.state.fieldIndex].value = num;
+            tmp[this.state.fieldIndex].value = num;
+            this.setState({formFields : tmp})
         }
     }
 
-    handleSubmit = (e: { preventDefault: () => void }) => {
+    private handleSubmit = (e: any) => {
         e.preventDefault()
         this.changeForm(1)
     }
@@ -87,21 +94,21 @@ export class Main extends React.Component<{}, IState> {
                     </div>
 
                     {this.state.showBMI ?
-                        <p>Hi {formFields[0].value}, your bmi is {calculateBMI(+formFields[3].value, +formFields[2].value).toFixed(2)}</p>
+                        <p>Hi {this.state.formFields[0].value}, your bmi is {calculateBMI(+this.state.formFields[3].value, +this.state.formFields[2].value).toFixed(2)}</p>
                         :
                         <div>
-                            <label>{formFields[this.state.fieldIndex].labelText}</label>
+                            <label>{this.state.formFields[this.state.fieldIndex].labelText}</label>
                             <br />
-                            {formFields[this.state.fieldIndex].type === 'select' ?
-                                <select name={formFields[this.state.fieldIndex].name} defaultValue={formFields[this.state.fieldIndex].value} onChange={this.handleChange}>
+                            {this.state.formFields[this.state.fieldIndex].type === 'select' ?
+                                <select name={this.state.formFields[this.state.fieldIndex].name} defaultValue={this.state.formFields[this.state.fieldIndex].value} onChange={this.handleChange}>
                                     <option key="default" value="">-- Select --</option>
                                     {this.getOptions()}
                                 </select>
                                 :
                                 <input
-                                    type={formFields[this.state.fieldIndex].type}
-                                    name={formFields[this.state.fieldIndex].name}
-                                    defaultValue={formFields[this.state.fieldIndex].value === 0 ? "" : formFields[this.state.fieldIndex].value}
+                                    type={this.state.formFields[this.state.fieldIndex].type}
+                                    name={this.state.formFields[this.state.fieldIndex].name}
+                                    value={this.state.formFields[this.state.fieldIndex].value === 0 ? "" : this.state.formFields[this.state.fieldIndex].value}
                                     onChange={this.handleChange}
                                 />
                             }
