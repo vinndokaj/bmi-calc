@@ -88,9 +88,14 @@ export class Main extends React.Component<{}, IState> {
         return (
             <div className="mt-3 text-center align-center">
                 <form onSubmit={this.handleSubmit}>
-                    <div className="mb-2">
-                        <button className="btn btn-secondary mr-5" type="button" onClick={(e) => this.changeForm(-1)}>Back</button>
-                        <button className="btn btn-primary ml-5" type="button" onClick={(e) => this.changeForm(1)}>Next</button>
+                    <div className="mb-2 text-center">
+                        <button className="btn btn-secondary" type="button" onClick={(e) => this.changeForm(-1)}>Back</button>
+                        {this.state.showBMI ? 
+                            "" 
+                            :
+                            <button className="btn btn-primary ml-5" type="button" onClick={(e) => this.changeForm(1)}>Next</button>
+                        }
+                        
                     </div>
 
                     {this.state.showBMI ?
